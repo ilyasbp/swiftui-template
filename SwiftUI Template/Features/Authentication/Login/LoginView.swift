@@ -63,28 +63,11 @@ struct LoginView: View {
                 .padding(.bottom, 32)
                 
                 // Login Button
-                Button(action: {
-                    vm.login()
-                }) {
-                    HStack {
-                        if vm.isLoading {
-                            Spinner()
-                        }
-                        else {
-                            Text("Masuk")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.blue)
-                            .opacity(vm.username.isEmpty || vm.password.isEmpty || vm.isLoading ? 0.6 : 1.0)
-                    )
-                }
-                .disabled(vm.username.isEmpty || vm.password.isEmpty || vm.isLoading)
+                FilledButton(
+                    title: "Masuk",
+                    isLoading: vm.isLoading,
+                    isDisabled: vm.username.isEmpty || vm.password.isEmpty || vm.isLoading,
+                ) { vm.login() }
                 
                 Spacer()
                 
