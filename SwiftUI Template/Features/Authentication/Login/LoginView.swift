@@ -85,9 +85,6 @@ struct LoginView: View {
                     )
                 }
                 .disabled(vm.username.isEmpty || vm.password.isEmpty || vm.isLoading)
-                .navigationDestination(isPresented: $vm.shouldNavigate) {
-                    MainMenuView()
-                }
                 
                 Spacer()
                 

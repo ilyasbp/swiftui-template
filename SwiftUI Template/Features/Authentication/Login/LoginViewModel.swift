@@ -9,48 +9,37 @@ import Combine
 import Foundation
 
 @MainActor
-final class LoginViewModel: ObservableObject {
+final class LoginViewModel: BaseViewModel {
+    // MARK: - Input
+
     @Published var username: String = ""
     @Published var password: String = ""
-    @Published var errorMessage: String = ""
-    @Published var isLoading: Bool = false
-    @Published var shouldNavigate: Bool = false
 
-    private var cancellables = Set<AnyCancellable>()
+    // MARK: - API Call
 
     func login() {
-        isLoading = true
-        errorMessage = ""
-
-        Task {
-            do {
-                let response: LoginModel = try await APIService.post(
-                    urlString: APIPath.Auth.login,
-                    parameters: [
-                        "phone": username,
-                        "password": password
-                    ],
-                    functionName: #function,
-                    fileName: #fileID
-                )
-
-                setupUserData(response)
-            }
-            catch {
-                errorMessage = APIError.from(error).description
-            }
-            isLoading = false
+        runAsync {
+            let response: LoginModel = try await APIService.post(
+                urlString: APIPath.Auth.login,
+                parameters: [
+                    "phone": self.username,
+                    "password": self.password
+                ],
+                functionName: #function,
+                fileName: #fileID
+            )
+            self.setupUserData(response)
         }
     }
 
-    func setupUserData(_ loginModel: LoginModel) {
+    // MARK: - Helper
+
+    private func setupUserData(_ loginModel: LoginModel) {
         AuthSession.isLoggedIn = true
         AuthSession.token = loginModel.meta.token
-        
+
         UserProfile.name = loginModel.data.name
         UserProfile.email = loginModel.data.email
         UserProfile.phone = loginModel.data.phone
-        
-        shouldNavigate = true
     }
 }
